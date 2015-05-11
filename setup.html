@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="assets/js/libs/dc1-client-js-sample.js"></script>
+    <script src="assets/js/libs/jquery-2.1.3.min.js"></script>
+    <script src="assets/js/Conf.js"></script>
+    <script>
+
+        $(document).ready(
+                function(){
+                    $("#setup").click(
+                            function(){
+                                setup();
+                            }
+                    )
+                }
+        );
+
+        var setup = function() {
+
+            var dcx = new dcc.DcContext(Conf.UNITURL);
+            var acc = dcx.withToken(Conf.UNITUERTOKEN);
+            var unitManager = acc.asCellOwner();
+
+            //Create cell
+            var cellCreateReqBody = {
+                Name : Conf.CELLNAME
+            };
+            var pioCell = unitManager.unit.cell.create(cellCreateReqBody);
+
+            //Create box
+            var boxPath = pioCell.getUrl() + Conf.BOXNMAE;
+            acc.setBoxName(Conf.BOXNMAE);
+            acc.setSchema("");
+            var boxCreateReqBody = {
+                Name : Conf.BOXNMAE
+            };
+            var pioBox = new dcc.box.Box(acc, boxCreateReqBody, boxPath);
+            pioCell.ctl.box.create(pioBox);
+            var testBox = pioCell.ctl.box.retrieve(Conf.BOXNMAE);
+
+            //Create Account
+            var accountCreateReqBody = {
+                Name : Conf.ACCOUNTNAME
+            };
+            var pioAccount = new dcc.cellctl.Account(acc, accountCreateReqBody);
+            var testAccout = pioCell.ctl.account.create(pioAccount, Conf.PASSWORD);
+
+            //Create Role
+            var roleCreateReqBody = {
+                Name : Conf.ROLENAME
+            };
+            var pioRole = new dcc.cellctl.Role(acc, roleCreateReqBody);
+            var testRole = pioCell.ctl.role.create(roleCreateReqBody);
+
+            //$links Account and Role
+            testRole.account.link(testAccout);
+
+            //Set ACL
+            var acl = new dcc.Acl();
+            var ace = new dcc.Ace();
+            ace.setRole(testRole);
+            ace.addPrivilege(Conf.PRIVILEGE);
+            acl.addAce(ace);
+            testBox.acl.setAsAcl(acl);
+
+            //Create WebDAV collection
+            testBox.mkCol(Conf.COLLECTIONNAME);
+        };
+    </script>
+</head>
+<body>
+
+<input type="button" id="setup" value="SETUP">
+
+</body>
+</html>
