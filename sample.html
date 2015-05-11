@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<label >1. File input</label>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
@@ -6,10 +7,10 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <title></title>
     <h3> JS Sample </h3>
-    <label >1. File input</label>
-    <input type="file" id="files" name="files[]" class="file" accept="text/plain" />
+    <!--<input type="file" id="files" name="files[]" class="file" accept="text/plain" />-->
+    <input type="file" id="files" name="files[]" class="file" />
 
-    <script src="assets/js/libs/dc1-client-js-sample.js"></script>
+    <script src="assets/js/libs/pio-client.js"></script>
     <script src="assets/js/libs/jquery-2.1.3.min.js"></script>
     <script src="assets/js/Conf.js"></script>
     <script src="assets/js/model/File.js"></script>
@@ -27,7 +28,8 @@
                     File.data =e.target.result;
                 }
             })(selectedFile);
-            reader.readAsText(selectedFile);
+//            reader.readAsText(selectedFile);
+            reader.readAsArrayBuffer(selectedFile);
         };
 
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
@@ -49,27 +51,38 @@
             cell.box('piobox').col('col').put(uploadFileName, options);
         };
 
-        var downloadFileFromPIO = function(){
+        var downloadFileFromPIO = function() {
             var dcx = new dcc.DcContext(Conf.UNITURL);
-            var acc = dcx.asAccount(Conf.CELLNAME , Conf.ACCOUNTNAME, Conf.PASSWORD);
+            var acc = dcx.asAccount(Conf.CELLNAME, Conf.ACCOUNTNAME, Conf.PASSWORD);
             var cell = acc.cell();
+            var fileList = cell.box('piobox').col('col').getFileList();
+            console.log(fileList[0].Name);
 
-            var options = {
-                headers : {
-                    "Accept" : File.type,
-                    "If-Match" : "*"
-                }
-            };
+//            var anchor = $("<a></a>",{
+//                href :"http://localhost:1210/pio/piobox/col/androidify.png",
+//                text : "ImageDownload",
+//                download : "file.png",
+//                target : "_blank"
+//            }).appendTo("body");
 
-            var resp = cell.box('piobox').col('col').getAsResponse(File.name,'',options,'');
-
+            //jqueryで自動ダウンロードボタンが作れないので、ひとまずWindowオブジェクトで対処
+            var anchor = document.createElement("a");
+            anchor.href = fileList[0].Name;
+            anchor.target = "_blank";
+            anchor.download = "hoge.png";
+            document.body.appendChild(anchor);
+            anchor.click();
         };
 
-        $(document).ready(
-                function(){
+        $(document).ready(function(){
                     $("#uploadButton").click(
                             function(){
                                 uploadFileToPIO();
+                            }
+                    );
+                    $("#downloadButton").click(
+                            function(){
+                                downloadFileFromPIO();
                             }
                     )
                 }
@@ -82,8 +95,17 @@
 <br>
 <label >2. File upload</label>
 <p>
-<button type="button" id="uploadButton" class="btn btn-default">UPLOAD</button>
+    <button type="button" id="uploadButton" class="btn btn-default">UPLOAD</button>
 </p>
+<label >3. File view</label>
+<p>
+    <button type="button" id="displayFiles" class="btn btn-default">DISPLAYLOAD</button>
+</p>
+<label >4. File download</label>
+<p>
+    <button type="button" id="downloadButton" class="btn btn-default">DOWNLOAD</button>
+</p>
+
 <br>
 
 </body>
