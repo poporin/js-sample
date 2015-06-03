@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<label >1. File input</label>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <title></title>
-    <h3> JS Sample </h3>
-    <!--<input type="file" id="files" name="files[]" class="file" accept="text/plain" />-->
-    <input type="file" id="files" name="files[]" class="file" />
+    <h3> Photo Viewer </h3>
+    <label >1. File input</label>
+    <input type="file" id="files" name="files[]" class="file" accept="image/*" />
 
     <script src="assets/js/libs/pio-client.js"></script>
     <script src="assets/js/libs/jquery-2.1.3.min.js"></script>
@@ -49,7 +48,30 @@
             };
 
             cell.box('piobox').col('col').put(uploadFileName, options);
+            //ToDo Fileオブジェクトの中身を削除する必要あり？二回目のアップでも前回選択した画像がアップされてしまうため
         };
+
+        var displayFiles = function(){
+            var dcx = new dcc.DcContext(Conf.UNITURL);
+            var acc = dcx.asAccount(Conf.CELLNAME , Conf.ACCOUNTNAME, Conf.PASSWORD);
+            var cell = acc.cell('',{useCookie: true});
+            var cookiePeer = cell.getCookiePeer();
+            console.log(cookiePeer);
+
+            //colディレクリのファイルリストを取得する
+            var resp = cell.box('piobox').col('col').getFileList();
+            console.log(resp);
+
+            var fileUrlArray = [];
+            for (var i in resp){
+                fileUrlArray[i] = resp[i].Name;
+                //ToDo 認証エラーになるのを解決する必要あり
+                $('#viewArea').append($('<img/>').attr('src', fileUrlArray[i]));
+                console.log(resp[i].Name);
+            };
+            //ToDo 表示した画像を消す必要あり。VIEWボタンを押すたびに表示画像が増えていく。
+        };
+
 
         var downloadFileFromPIO = function() {
             var dcx = new dcc.DcContext(Conf.UNITURL);
@@ -80,6 +102,11 @@
                                 uploadFileToPIO();
                             }
                     );
+                    $("#displayButton").click(
+                            function(){
+                                displayFiles();
+                            }
+                    ),
                     $("#downloadButton").click(
                             function(){
                                 downloadFileFromPIO();
@@ -99,7 +126,7 @@
 </p>
 <label >3. File view</label>
 <p>
-    <button type="button" id="displayFiles" class="btn btn-default">DISPLAYLOAD</button>
+    <button type="button" id="displayButton" class="btn btn-default">DISPLAYLOAD</button>
 </p>
 <label >4. File download</label>
 <p>
