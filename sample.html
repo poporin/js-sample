@@ -47,7 +47,7 @@
                 }
             };
 
-            cell.box('piobox').col('col').put(uploadFileName, options);
+            cell.box(Conf.BOXNMAE).col(Conf.COLLECTIONNAME).put(uploadFileName, options);
             //ToDo Fileオブジェクトの中身を削除する必要あり？二回目のアップでも前回選択した画像がアップされてしまうため
         };
 
@@ -59,12 +59,12 @@
             console.log(cookiePeer);
 
             //colディレクリのファイルリストを取得する
-            var resp = cell.box('piobox').col('col').getFileList();
+            var resp = cell.box(Conf.BOXNMAE).col(Conf.COLLECTIONNAME).getFileList();
             console.log(resp);
 
             var fileUrlArray = [];
             for (var i in resp){
-                fileUrlArray[i] = resp[i].Name;
+                fileUrlArray[i] = resp[i].Name + "?dc_cookie_peer=" + cookiePeer;
                 //ToDo 認証エラーになるのを解決する必要あり
                 $('#viewArea').append($('<img/>').attr('src', fileUrlArray[i]));
                 console.log(resp[i].Name);
@@ -127,6 +127,7 @@
 <label >3. File view</label>
 <p>
     <button type="button" id="displayButton" class="btn btn-default">DISPLAYLOAD</button>
+    <div id="viewArea"></div>
 </p>
 <label >4. File download</label>
 <p>

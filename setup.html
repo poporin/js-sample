@@ -33,7 +33,8 @@
             //Create box
             var boxPath = pioCell.getUrl() + Conf.BOXNMAE;
             acc.setBoxName(Conf.BOXNMAE);
-            acc.setSchema("");
+            acc.setBoxSchema(Conf.UNITURL + Conf.CELLNAME);
+            console.log(acc);
             var boxCreateReqBody = {
                 Name : Conf.BOXNMAE
             };
@@ -61,13 +62,30 @@
             //Set ACL
             var acl = new dcc.Acl();
             var ace = new dcc.Ace();
-            ace.setRole(testRole);
+            ace.setPrincipal(testRole);
             ace.addPrivilege(Conf.PRIVILEGE);
+            console.log(ace);
+            console.log(typeof ace);
             acl.addAce(ace);
+            console.log(acl);
             testBox.acl.setAsAcl(acl);
+
 
             //Create WebDAV collection
             testBox.mkCol(Conf.COLLECTIONNAME);
+
+
+            //mainBoxの設定
+            ///////////////////////////////////
+            pioCell.box('__').acl.setAsAcl(acl);
+
+
+            pioCell.box('__').mkCol('assets');
+            pioCell.box('__').col('assets').mkCol('js');
+            pioCell.box('__').col('assets').mkCol('css');
+            pioCell.box('__').col('assets').col('js').mkCol('libs');
+            pioCell.box('__').col('assets').col('js').mkCol('model');
+            ///////////////////////////////////
         };
     </script>
 </head>

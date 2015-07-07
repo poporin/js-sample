@@ -4,10 +4,11 @@
 
 Conf = {
 	//UNITURL : "http://localhost:1210/",
-	UNITURL : "https://fj.baas.jp.fujitsu.com/",
+	UNITURL : "http://127.0.0.1:1210/",
+	//UNITURL : "https://fj.baas.jp.fujitsu.com/",
 	UNITUERTOKEN : "personiumio",
-	CELLNAME : "pio26",
-	BOXNMAE : "piobox",
+	CELLNAME : "pio21",
+	BOXNMAE : "piobox1",
 	ACCOUNTNAME : "pio",
 	PASSWORD : "pio-pw",
 	ROLENAME : "pio",

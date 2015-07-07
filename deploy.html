@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="assets/js/libs/pio-client.js"></script>
+    <script src="assets/js/libs/jquery-2.1.3.min.js"></script>
+    <script src="assets/js/Conf.js"></script>
+    <script>
+
+        $(document).ready(
+                function(){
+                    $("#deploy").click(
+                            function(){
+                                deploy();
+                            }
+                    )
+                }
+        );
+
+        var deploy = function() {
+
+            var htmlArray = new Array();
+            var jsArray = new Array();
+            var cssArray = new Array();
+
+            htmlArray.push('sample.html');
+
+            var htmlList = new Array();
+            console.log(htmlList);
+
+            var jsList = new Array();
+
+            jsArray.push('Conf.js');
+            jsArray.push('File.js');
+            jsArray.push('pio-client.js');
+            jsArray.push('jquery-2.1.3.min.js');
+
+            var cssList = new Array();
+
+            cssArray.push('bootstrap.min.css');
+            cssArray.push('fileinput.min.css');
+
+            var dcx = new dcc.DcContext(Conf.UNITURL);
+            var acc = dcx.asAccount(Conf.CELLNAME , Conf.ACCOUNTNAME, Conf.PASSWORD);
+            var cell = acc.cell();
+
+            //hrmlファイルをアップロード
+            $.ajax({
+                type: 'GET',
+                url: htmlArray[0],
+                data: 'html',
+                async: false,
+                success: function(data){
+                    htmlList.push({
+                        name: htmlArray[0],
+                        data: data,
+                        type: 'html'
+                    });
+                    console.log(htmlList);
+                    var uploadFileName = htmlList[0].name;
+                    var options = {
+                        body : htmlList[0].data,
+                        headers : {
+                            "Content-Type" : 'text/' + htmlList[0].type,
+                            "If-Match" : "*"
+                        }
+                    };
+
+                    cell.box('__').put(uploadFileName, options);
+                }
+            });
+
+            //jsファイル（Conf.js）をアップロード
+            for (var i in jsArray){
+                $.ajax({
+                    type: 'GET',
+                    url: 'assets/js/' + jsArray[i],
+                    data: 'js',
+                    async: false,
+                    success: function(data){
+                        jsList.push({
+                            name: jsArray[i],
+                            data: data,
+                            type: 'js'
+                        });
+                        console.log(i);
+                        console.log(jsList);
+                        var uploadFileName = jsList[i].name;
+                        var options = {
+                            body : jsList[i].data,
+                            headers : {
+                                "Content-Type" : 'application/' + jsList[i].type,
+                                "If-Match" : "*"
+                            }
+                        };
+                        cell.box('__').col('assets').col('js').put(uploadFileName, options);
+                    }
+                })
+            }
+
+            //jsファイル（File.js）をアップロード
+            for (var i in jsArray){
+                $.ajax({
+                    type: 'GET',
+                    url: 'assets/js/model/' + jsArray[i],
+                    data: 'js',
+                    async: false,
+                    success: function(data){
+                        jsList.push({
+                            name: jsArray[i],
+                            data: data,
+                            type: 'js'
+                        });
+                        console.log(i);
+                        console.log(jsList);
+                        var uploadFileName = jsList[i].name;
+                        var options = {
+                            body : jsList[i].data,
+                            headers : {
+                                "Content-Type" : 'application/' + jsList[i].type,
+                                "If-Match" : "*"
+                            }
+                        };
+                        cell.box('__').col('assets').col('js').col('model').put(uploadFileName, options);
+                    }
+                })
+            }
+
+            //jsファイル（pio-client.js,jquery-2.1.3.min.js）をアップロード
+            for (var i in jsArray){
+                $.ajax({
+                    type: 'GET',
+                    url: 'assets/js/libs/' + jsArray[i],
+                    data: 'js',
+                    async: false,
+                    success: function(data){
+                        jsList.push({
+                            name: jsArray[i],
+                            data: data,
+                            type: 'js'
+                        });
+                        console.log(i);
+                        console.log(jsList);
+                        var uploadFileName = jsList[i].name;
+                        var options = {
+                            body : jsList[i].data,
+                            headers : {
+                                "Content-Type" : 'application/' + jsList[i].type,
+                                "If-Match" : "*"
+                            }
+                        };
+                        cell.box('__').col('assets').col('js').col('libs').put(uploadFileName, options);
+                    }
+                })
+            }
+
+            //cssファイルをアップロード
+            for (var i in cssArray){
+                $.ajax({
+                    type: 'GET',
+                    url: 'assets/css/' + cssArray[i],
+                    data: 'css',
+                    async: false,
+                    success: function(data){
+                        cssList.push({
+                            name: cssArray[i],
+                            data: data,
+                            type: 'css'
+                        });
+                        console.log(i);
+                        console.log(cssList);
+                        var uploadFileName = cssList[i].name;
+                        var options = {
+                            body : cssList[i].data,
+                            headers : {
+                                "Content-Type" : 'text/' + cssList[i].type,
+                                "If-Match" : "*"
+                            }
+                        };
+                        cell.box('__').col('assets').col('css').put(uploadFileName, options);
+                    }
+                })
+            }
+
+        };
+
+    </script>
+</head>
+<body>
+
+<input type="button" id="deploy" value="DEPLOY">
+
+</body>
+</html>
