@@ -23,6 +23,7 @@
             var htmlArray = new Array();
             var jsArray = new Array();
             var cssArray = new Array();
+            var imgArray = new Array();
 
             htmlArray.push('sample.html');
 
@@ -35,21 +36,29 @@
             jsArray.push('File.js');
             jsArray.push('pio-client.js');
             jsArray.push('jquery-2.1.3.min.js');
+            jsArray.push('image-picker.js');
 
             var cssList = new Array();
 
             cssArray.push('bootstrap.min.css');
             cssArray.push('fileinput.min.css');
+            cssArray.push('image-picker.css');
 
             var dcx = new dcc.DcContext(Conf.UNITURL);
             var acc = dcx.asAccount(Conf.CELLNAME , Conf.ACCOUNTNAME, Conf.PASSWORD);
             var cell = acc.cell();
 
+
+            var imgList = new Array();
+
+            imgArray.push('sample.jpeg');
+
+
             //hrmlファイルをアップロード
             $.ajax({
                 type: 'GET',
                 url: htmlArray[0],
-                data: 'html',
+//                data: 'html',
                 async: false,
                 success: function(data){
                     htmlList.push({
@@ -76,7 +85,7 @@
                 $.ajax({
                     type: 'GET',
                     url: 'assets/js/' + jsArray[i],
-                    data: 'js',
+//                    data: 'js',
                     async: false,
                     success: function(data){
                         jsList.push({
@@ -104,7 +113,7 @@
                 $.ajax({
                     type: 'GET',
                     url: 'assets/js/model/' + jsArray[i],
-                    data: 'js',
+//                    data: 'js',
                     async: false,
                     success: function(data){
                         jsList.push({
@@ -132,7 +141,7 @@
                 $.ajax({
                     type: 'GET',
                     url: 'assets/js/libs/' + jsArray[i],
-                    data: 'js',
+//                    data: 'js',
                     async: false,
                     success: function(data){
                         jsList.push({
@@ -160,7 +169,7 @@
                 $.ajax({
                     type: 'GET',
                     url: 'assets/css/' + cssArray[i],
-                    data: 'css',
+//                    data: 'css',
                     async: false,
                     success: function(data){
                         cssList.push({
@@ -179,6 +188,34 @@
                             }
                         };
                         cell.box('__').col('assets').col('css').put(uploadFileName, options);
+                    }
+                })
+            }
+
+            //画像ファイルをアップロード
+            for (var i in imgArray){
+                $.ajax({
+                    type: 'GET',
+                    url: 'assets/img/' + imgArray[i],
+//                    data: 'jpeg',
+                    async: false,
+                    success: function(data){
+                        imgList.push({
+                            name: imgArray[i],
+                            data: data,
+                            type: 'jpeg'
+                        });
+                        console.log(i);
+                        console.log(imgList);
+                        var uploadFileName = imgList[i].name;
+                        var options = {
+                            body : imgList[i].data,
+                            headers : {
+                                "Content-Type" : 'image/' + imgList[i].type,
+                                "If-Match" : "*"
+                            }
+                        };
+                        cell.box('__').col('assets').col('img').put(uploadFileName, options);
                     }
                 })
             }
